@@ -27,16 +27,12 @@ services:
     container_name: test_api
     build:
       context: tests
-    restart: always
     depends_on:
       - elasticsearch
       - redis
-      - async_api
     entrypoint: >
-      sh -c "pip install -r /tests/functional/requirements.txt
-      && python3 /tests/functional/utils/wait_for_es.py
-      && python3 /tests/functional/utils/wait_for_redis.py
-      && pytest /tests/functional/src"
+      sh -c " python3 functional/utils/wait_for_es.py
+      && pytest /code/functional/src"
 
   redis:
     container_name: redis_test
