@@ -32,7 +32,7 @@ services:
       - redis
     entrypoint: >
       sh -c " python3 functional/utils/wait_for_es.py
-      && pytest /code/functional/src"
+      && pytest /tests/functional/src"
 
   redis:
     container_name: redis_test
