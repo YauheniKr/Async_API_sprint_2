@@ -27,10 +27,9 @@ class ETLLoader:
         Проверяем и создаем индекс
         """
         index_exist = await self.es_client.indices.exists(self.index_name)
-        scheme_dict = self._get_json_data('elastic_movies_schema.json')
+        scheme_dict = self._get_json_data('/tests/functional/utils/elastic_movies_schema.json')
         if not index_exist:
             await self.es_client.indices.create(index=self.index_name, body=scheme_dict)
-        await self.es_client.close()
 
     def _get_es_bulk_query(self, rows: list[dict]) -> list[str]:
         """
