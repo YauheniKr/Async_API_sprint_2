@@ -5,6 +5,8 @@ from dataclasses import dataclass
 from multidict import CIMultiDictProxy
 from elasticsearch import AsyncElasticsearch
 
+from tests.functional.utils.etl_loader import ETLLoader
+
 SERVICE_URL = 'http://127.0.0.1:8000'
 
 
@@ -17,7 +19,7 @@ class HTTPResponse:
 
 @pytest.fixture(scope='session')
 async def es_client():
-    client = AsyncElasticsearch(hosts='127.0.0.1:9200')
+    client = AsyncElasticsearch(hosts='http://elasticsearch:9200')
     yield client
     await client.close()
 
@@ -34,7 +36,7 @@ def make_get_request(session):
     async def inner(method: str = None, params: dict = None) -> HTTPResponse:
         params = params or {}
         # url = SERVICE_URL + '/api/v1' + method  # в боевых системах старайтесь так не делать!
-        url = 'http://192.168.88.131:8000/api/v1/film/b3fcaf6d-6a31-44fb-95ee-6a8993bf9c02'
+        url = 'http://192.168.88.131:8000/api/v1/film/00af52ec-9345-4d66-adbe-50eb917f463a'
         async with session.get(url, params=params) as response:
             return HTTPResponse(
                 body=await response.json(),
@@ -48,8 +50,9 @@ def make_get_request(session):
 @pytest.mark.asyncio
 async def test_search_detailed(es_client, make_get_request):
 
-    # Заполнение данных для теста
-    # await es_client.bulk(...)
+    etl_loader = ETLLoader('movies', es_client)
+    await etl_loader.index_creation()
+    await etl_loader.load_to_es('/tests/functional/utils/movies_test_data.json')
 
     # Выполнение запроса
     response = await make_get_request()
