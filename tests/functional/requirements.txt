@@ -4,3 +4,4 @@ aiohttp==3.7.2
 requests
 elasticsearch==7.9.1
 aioredis
+pydantic
