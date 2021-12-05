@@ -2,6 +2,7 @@ import json
 import logging
 
 from elasticsearch import AsyncElasticsearch
+from elasticsearch.exceptions import NotFoundError
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -22,12 +23,12 @@ class ETLLoader:
             scheme_dict = json.load(file)
         return scheme_dict
 
-    async def index_creation(self) -> None:
+    async def index_creation(self, file_path) -> None:
         """
         Проверяем и создаем индекс
         """
         index_exist = await self.es_client.indices.exists(self.index_name)
-        scheme_dict = self._get_json_data('/tests/functional/utils/elastic_movies_schema.json')
+        scheme_dict = self._get_json_data(file_path)
         if not index_exist:
             await self.es_client.indices.create(index=self.index_name, body=scheme_dict)
 
@@ -59,3 +60,13 @@ class ETLLoader:
             if error_message:
                 logger.error(error_message)
         await self.es_client.close()
+
+    async def destroy_es_index(self):
+        """
+        Удаляем созданный индекс
+        :return: None
+        """
+        index_exist = await self.es_client.indices.exists(self.index_name)
+        if not index_exist:
+            return NotFoundError
+        await self.es_client.indices.delete(self.index_name)
