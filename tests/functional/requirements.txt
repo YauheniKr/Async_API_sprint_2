@@ -5,3 +5,4 @@ requests
 elasticsearch==7.9.1
 aioredis
 pydantic
+redis
