@@ -2,8 +2,9 @@ import logging
 from time import sleep
 
 import requests
+from tests.functional.settings import test_settings
 
-URL = 'http://elasticsearch:9200/'
+URL = f'http://{test_settings.ELASTIC_HOST}:{test_settings.ELASTIC_PORT}/'
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
