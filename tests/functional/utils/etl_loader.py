@@ -8,11 +8,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-class ETLLoader:
-    def __init__(self, index_name: str, es_client: AsyncElasticsearch):
-        self.index_name = index_name
-        self.es_client = es_client
-
+class Loader:
     def _get_json_data(self, json_file: str) -> list[json]:
         """
         МЕтод для получения json данных из файла
@@ -22,6 +18,12 @@ class ETLLoader:
         with open(json_file) as file:
             scheme_dict = json.load(file)
         return scheme_dict
+
+
+class ETLLoader(Loader):
+    def __init__(self, index_name: str, es_client: AsyncElasticsearch):
+        self.index_name = index_name
+        self.es_client = es_client
 
     async def index_creation(self, file_path) -> None:
         """
