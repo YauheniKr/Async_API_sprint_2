@@ -61,7 +61,6 @@ class ETLLoader(Loader):
             error_message = item['index'].get('error')
             if error_message:
                 logger.error(error_message)
-        await self.es_client.close()
 
     async def destroy_es_index(self):
         """
