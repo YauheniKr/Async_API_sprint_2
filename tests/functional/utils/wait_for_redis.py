@@ -3,7 +3,6 @@ from time import sleep
 
 import redis
 
-# from tests.functional.settings import Settings
 from tests.functional.settings import test_settings
 
 logging.basicConfig(level=logging.INFO)
