@@ -32,12 +32,12 @@ def film_data_prepare():
 
 
 @pytest.fixture(scope='session')
-async def es_client(film_data):
+async def es_client(film_data_prepare):
     elastic_host = f'{test_settings.ELASTIC_HOST}:{test_settings.ELASTIC_PORT}'
     client = AsyncElasticsearch(hosts=elastic_host)
-    etl_loader = ETLLoader(film_data['index'], client)
-    await etl_loader.index_creation(film_data['index_file'])
-    await etl_loader.load_to_es(film_data['test_data'])
+    etl_loader = ETLLoader(film_data_prepare['index'], client)
+    await etl_loader.index_creation(film_data_prepare['index_file'])
+    await etl_loader.load_to_es(film_data_prepare['test_data'])
     yield client
     await etl_loader.destroy_es_index()
     await client.close()
@@ -50,7 +50,7 @@ async def session():
     await session.close()
 
 
-@pytest.fixture
+@pytest.fixture()
 def make_get_request(session):
     async def inner(method: str = None, params: dict = None) -> HTTPResponse:
         params = params or {}
