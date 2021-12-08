@@ -15,5 +15,5 @@ class TestsFilmsApi:
     async def test_film_list(self, es_client, film_data_prepare, make_get_request):
         response = await make_get_request('?sort=-imdb_rating')
         assert response.status == 200
+        assert response.body == sorted(response.body, key=lambda x: -x['imdb_rating'])
         assert len(response.body) == 50
-
