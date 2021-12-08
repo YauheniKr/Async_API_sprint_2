@@ -65,7 +65,7 @@ async def session():
 def make_get_request(session):
     async def inner(method: str = None, params: dict = None) -> HTTPResponse:
         params = params or {}
-        url = f'http://{test_settings.SERVICE_HOST}:{test_settings.SERVICE_PORT}/api/v1/film/{method}'
+        url = f'http://{test_settings.SERVICE_HOST}:{test_settings.SERVICE_PORT}/api/v1/{method}'
         async with session.get(url, params=params) as response:
             return HTTPResponse(body=await response.json(), headers=response.headers, status=response.status, )
 
