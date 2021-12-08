@@ -2,6 +2,7 @@ import asyncio
 import logging
 
 import aiohttp
+import aioredis
 import pytest
 from elasticsearch import AsyncElasticsearch
 
@@ -29,6 +30,14 @@ def film_data_prepare():
         'test_data': TESTDATA_DIR.joinpath('movies_test_data.json'),
     }
     return film_data
+
+
+@pytest.fixture(scope='session')
+async def redis_client():
+    redis = await aioredis.create_redis_pool((test_settings.REDIS_HOST,
+                                              test_settings.REDIS_PORT), minsize=10, maxsize=20)
+    yield redis
+    redis.close()
 
 
 @pytest.fixture(scope='session')
