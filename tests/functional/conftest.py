@@ -36,7 +36,9 @@ def film_data_prepare():
 async def redis_client():
     redis = await aioredis.create_redis_pool((test_settings.REDIS_HOST,
                                               test_settings.REDIS_PORT), minsize=10, maxsize=20)
+    await redis.flushall()
     yield redis
+    await redis.flushall()
     redis.close()
 
 
