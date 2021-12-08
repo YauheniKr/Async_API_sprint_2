@@ -55,7 +55,7 @@ class ETLLoader(Loader):
         json_data = self._get_json_data(file_data_name)
         prepared_query = self._get_es_bulk_query(json_data)
         adopted_query = '\n'.join(prepared_query) + '\n'
-        response = await self.es_client.bulk(adopted_query)
+        response = await self.es_client.bulk(adopted_query,  refresh=True)
 
         for item in response['items']:
             error_message = item['index'].get('error')
