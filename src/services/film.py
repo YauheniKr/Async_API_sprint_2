@@ -60,7 +60,7 @@ class FilmService:
         if filter_request:
             s = Search(index="movies").query("bool", minimum_should_match=1, should=[
                 Q("nested", path="genre", query=Q("match", genre__id=str(filter_request)))
-            ])
+            ]).sort(sort)[start_number:end_number]
         films = await self._get_data(s)
         if films is None:
             return None
