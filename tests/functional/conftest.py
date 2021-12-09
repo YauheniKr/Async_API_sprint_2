@@ -33,6 +33,16 @@ def film_data_prepare():
 
 
 @pytest.fixture(scope='session')
+def genre_data_prepare():
+    genre_data = {
+        'index': 'genre',
+        'index_file': SCHEMA_DIR.joinpath('elastic_movies_schema.json'),
+        'test_data': TESTDATA_DIR.joinpath('movies_test_data.json'),
+    }
+    return genre_data
+
+
+@pytest.fixture(scope='session')
 async def redis_client():
     redis = await aioredis.create_redis_pool((test_settings.REDIS_HOST,
                                               test_settings.REDIS_PORT), minsize=10, maxsize=20)
