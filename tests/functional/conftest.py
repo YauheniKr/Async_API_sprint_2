@@ -7,7 +7,7 @@ import pytest
 from elasticsearch import AsyncElasticsearch
 
 from tests.functional.utils.etl_loader import ETLLoader
-from tests.functional.settings import test_settings, SCHEMA_DIR, TESTDATA_DIR
+from tests.functional.settings import test_settings
 from tests.functional.utils.models import HTTPResponse
 
 logging.basicConfig(level=logging.INFO)
@@ -23,26 +23,6 @@ def event_loop(request):
 
 
 @pytest.fixture(scope='session')
-def film_data_prepare():
-    film_data = {
-        'index': 'movies',
-        'index_file': SCHEMA_DIR.joinpath('elastic_movies_schema.json'),
-        'test_data': TESTDATA_DIR.joinpath('movies_test_data.json'),
-    }
-    return film_data
-
-
-@pytest.fixture(scope='session')
-def genre_data_prepare():
-    genre_data = {
-        'index': 'genre',
-        'index_file': SCHEMA_DIR.joinpath('elastic_movies_schema.json'),
-        'test_data': TESTDATA_DIR.joinpath('movies_test_data.json'),
-    }
-    return genre_data
-
-
-@pytest.fixture(scope='session')
 async def redis_client():
     redis = await aioredis.create_redis_pool((test_settings.REDIS_HOST,
                                               test_settings.REDIS_PORT), minsize=10, maxsize=20)
@@ -53,12 +33,12 @@ async def redis_client():
 
 
 @pytest.fixture(scope='session')
-async def es_client(film_data_prepare):
+async def es_client(request):
     elastic_host = f'{test_settings.ELASTIC_HOST}:{test_settings.ELASTIC_PORT}'
     client = AsyncElasticsearch(hosts=elastic_host)
-    etl_loader = ETLLoader(film_data_prepare['index'], client)
-    await etl_loader.index_creation(film_data_prepare['index_file'])
-    await etl_loader.load_to_es(film_data_prepare['test_data'])
+    etl_loader = ETLLoader(request.param['index'], client)
+    await etl_loader.index_creation(request.param['index_file'])
+    await etl_loader.load_to_es(request.param['test_data'])
     yield client
     await etl_loader.destroy_es_index()
     await client.close()
