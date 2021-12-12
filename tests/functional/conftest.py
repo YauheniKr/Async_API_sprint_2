@@ -7,11 +7,27 @@ import pytest
 from elasticsearch import AsyncElasticsearch
 
 from tests.functional.utils.etl_loader import ETLLoader
-from tests.functional.settings import test_settings
+from tests.functional.settings import test_settings, SCHEMA_DIR, TESTDATA_DIR
 from tests.functional.utils.models import HTTPResponse
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+PERSON_TEST_DATA = {
+    'index': 'person',
+    'index_file': SCHEMA_DIR.joinpath('elastic_person_schema.json'),
+    'test_data': TESTDATA_DIR.joinpath('person_test_data.json'),
+}
+FILM_TEST_DATA = {
+    'index': 'movies',
+    'index_file': SCHEMA_DIR.joinpath('elastic_movies_schema.json'),
+    'test_data': TESTDATA_DIR.joinpath('movies_test_data.json'),
+}
+GENRE_TEST_DATA = {
+    'index': 'genre',
+    'index_file': SCHEMA_DIR.joinpath('elastic_genre_schema.json'),
+    'test_data': TESTDATA_DIR.joinpath('genre_test_data.json'),
+}
 
 
 @pytest.yield_fixture(scope="session")
@@ -32,15 +48,38 @@ async def redis_client():
     redis.close()
 
 
-@pytest.fixture(scope='session')
-async def es_client(request):
-    elastic_host = f'{test_settings.ELASTIC_HOST}:{test_settings.ELASTIC_PORT}'
-    client = AsyncElasticsearch(hosts=elastic_host)
-    etl_loader = ETLLoader(request.param['index'], client)
+@pytest.fixture(params=[FILM_TEST_DATA])
+async def load_movies_to_es(request, es_client):
+    etl_loader = ETLLoader(request.param['index'], es_client)
     await etl_loader.index_creation(request.param['index_file'])
     await etl_loader.load_to_es(request.param['test_data'])
-    yield client
+    yield etl_loader
     await etl_loader.destroy_es_index()
+
+
+@pytest.fixture(params=[PERSON_TEST_DATA])
+async def load_person_to_es(request, es_client):
+    etl_loader = ETLLoader(request.param['index'], es_client)
+    await etl_loader.index_creation(request.param['index_file'])
+    await etl_loader.load_to_es(request.param['test_data'])
+    yield etl_loader
+    await etl_loader.destroy_es_index()
+
+
+@pytest.fixture(params=[GENRE_TEST_DATA])
+async def load_genre_to_es(request, es_client):
+    etl_loader = ETLLoader(request.param['index'], es_client)
+    await etl_loader.index_creation(request.param['index_file'])
+    await etl_loader.load_to_es(request.param['test_data'])
+    yield etl_loader
+    await etl_loader.destroy_es_index()
+
+
+@pytest.fixture(scope='session')
+async def es_client():
+    elastic_host = f'{test_settings.ELASTIC_HOST}:{test_settings.ELASTIC_PORT}'
+    client = AsyncElasticsearch(hosts=elastic_host)
+    yield client
     await client.close()
 
 
