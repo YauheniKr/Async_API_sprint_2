@@ -35,10 +35,10 @@ async def get_films(
         filter_request: Optional[UUID] = Query(None, alias='filter[genre]')
 ):
     films = await film_service.get_film_list(sort=sort, page_number=page_number, size=size,
-                                             filter_request=filter_request)
+                                             filter_genre=filter_request)
     if not films:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='film not found')
-    films_out = [FilmBase(uuid=film.id, **film.__dict__) for film in films]
+    films_out = [FilmBase(uuid=film.id, **film.dict()) for film in films]
     return films_out
 
 
@@ -49,16 +49,16 @@ async def search_films(
         page_number=Query(default=1, alias='page[number]'),
         size=Query(default=50, alias='page[size]')
 ):
-    films = await film_service.search_film_in_elastic(query=query, page_number=page_number, size=size)
+    films = await film_service.search_film(query=query, page_number=page_number, size=size)
     if not films:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='film not found')
-    films_out = [FilmBase(uuid=film.id, **film.__dict__) for film in films]
+    films_out = [FilmBase(uuid=film.id, **film.dict()) for film in films]
     return films_out
 
 
 @router.get('/{film_id}', response_model=Film)
 async def film_details(film_id: str, film_service: FilmService = Depends()) -> Film:
-    film = await film_service.get_by_id(film_id)
+    film = await film_service.get_film_by_id(film_id)
     if not film:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='film not found')
     genre_out = [Genre(uuid=genre.id, name=genre.name) for genre in film.genre]
