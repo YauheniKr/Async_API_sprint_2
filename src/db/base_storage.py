@@ -13,21 +13,10 @@ class BaseDataStorageService(ABC):
 
 
 class BaseFilmStorageService(BaseDataStorageService, ABC):
-    async def get_film_list(
-        self,
-        sort: str,
-        page_number: int,
-        page_size: int,
-        filter_genre: str
-    ):
+    async def get_film_list(self, sort: str, page_number: int, page_size: int, filter_genre: str) -> list:
         raise NotImplementedError
 
-    async def search_film(
-        self,
-        query: str,
-        page_number: int,
-        size: int
-    ):
+    async def search_film(self, query: str, page_number: int, page_size: int) -> list:
         raise NotImplementedError
 
     async def get_person_films_by_person_id(self, person_id: UUID4):
@@ -35,17 +24,12 @@ class BaseFilmStorageService(BaseDataStorageService, ABC):
 
 
 class BaseGenreStorageService(BaseDataStorageService, ABC):
-    async def get_list(self):
+    async def get_list(self) -> list:
         raise NotImplementedError
 
 
 class BasePersonStorageService(BaseDataStorageService, ABC):
-    async def search_person(
-        self,
-        query: str,
-        page_number: int,
-        page_size: int
-    ):
+    async def search_person(self, query: str, page_number: int, page_size: int) -> list:
         raise NotImplementedError
 
 
