@@ -1,3 +1,4 @@
+import elasticsearch
 from elasticsearch_dsl import Search
 from fastapi import Depends
 
@@ -31,5 +32,8 @@ class GenreService(BaseService):
         model=Genre,
     )
     async def get_genre_list(self):
-        genres = await self.data_service.get_list()
+        try:
+            genres = await self.data_service.get_list()
+        except elasticsearch.exceptions.NotFoundError:
+            return None
         return [Genre(**g) for g in genres]

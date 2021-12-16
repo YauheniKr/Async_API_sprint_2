@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 import pytest
 
 
@@ -7,7 +9,7 @@ class TestsSearchApi:
     async def test_film_search(self, load_movies_to_es, make_get_request, redis_client):
         param = {'query': 'star wars'}
         response = await make_get_request('film/search', param)
-        assert response.status == 200
+        assert response.status == HTTPStatus.OK
         assert len(response.body) == 50
         searched_film = {'imdb_rating': 9.5,
                          'title': 'The Secret World of Jeffree Star',
@@ -18,7 +20,7 @@ class TestsSearchApi:
     async def test_film_search_custom_param(self, load_movies_to_es, make_get_request, redis_client):
         param = {'query': 'star wars', 'page[number]': 1, 'page[size]': 20}
         response = await make_get_request('film/search', param)
-        assert response.status == 200
+        assert response.status == HTTPStatus.OK
         assert len(response.body) == 20
         searched_film = {'imdb_rating': 9.5,
                          'title': 'The Secret World of Jeffree Star',

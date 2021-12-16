@@ -6,8 +6,8 @@ import aioredis
 import pytest
 from elasticsearch import AsyncElasticsearch
 
-from tests.functional.utils.etl_loader import ETLLoader
 from tests.functional.settings import test_settings, SCHEMA_DIR, TESTDATA_DIR
+from tests.functional.utils.etl_loader import ETLLoader
 from tests.functional.utils.models import HTTPResponse
 
 logging.basicConfig(level=logging.INFO)
@@ -28,6 +28,46 @@ GENRE_TEST_DATA = {
     'index_file': SCHEMA_DIR.joinpath('elastic_genre_schema.json'),
     'test_data': TESTDATA_DIR.joinpath('genre_test_data.json'),
 }
+
+
+def prepare_person_film_data(person_data: dict, test_movies: list[dict]) -> list[dict]:
+    """
+
+    :param person_data: словарь с id персоны и его именем
+    :param test_movies: список фильмов
+    :return: список фильмов в которых участвовал person
+    """
+    out = []
+    for movie in test_movies:
+        if person_data in movie['actors'] or person_data in movie['writers'] or person_data in movie['directors']:
+            out.append({'id': movie['id'], 'imdb_rating': movie['imdb_rating'], 'title': movie['title']})
+    return out
+
+
+def adopt_test_data_movies(test_data: dict) -> dict:
+    """
+    Адаптируем тестовые данные под формат бизнес логики
+    :param test_data: dict
+    :return: dict
+    """
+    test_data['directors'] = [{'uuid': director['id'], 'full_name': director['name']} for director
+                              in test_data['directors']]
+    test_data['actors'] = [{'uuid': actor['id'], 'full_name': actor['name']} for actor
+                           in test_data['actors']]
+    test_data['writers'] = [{'uuid': writer['id'], 'full_name': writer['name']} for writer
+                            in test_data['writers']]
+    test_data['genre'] = [{'uuid': genre['id'], 'name': genre['name']} for genre in test_data['genre']]
+    test_data['uuid'] = test_data['id']
+    del (test_data['id'])
+    del (test_data['actors_names'])
+    del (test_data['writers_names'])
+    return test_data
+
+
+def adopt_film_list_data(test_data):
+    out_test_data = [{'uuid': film['id'], 'title': film['title'], 'imdb_rating': film['imdb_rating']}
+                     for film in test_data]
+    return out_test_data
 
 
 @pytest.yield_fixture(scope="session")
