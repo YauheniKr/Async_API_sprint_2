@@ -6,8 +6,8 @@ import aioredis
 import pytest
 from elasticsearch import AsyncElasticsearch
 
-from tests.functional.utils.etl_loader import ETLLoader
 from tests.functional.settings import test_settings, SCHEMA_DIR, TESTDATA_DIR
+from tests.functional.utils.etl_loader import ETLLoader
 from tests.functional.utils.models import HTTPResponse
 
 logging.basicConfig(level=logging.INFO)
@@ -44,10 +44,16 @@ def adopt_test_data_movies(test_data: dict) -> dict:
                             in test_data['writers']]
     test_data['genre'] = [{'uuid': genre['id'], 'name': genre['name']} for genre in test_data['genre']]
     test_data['uuid'] = test_data['id']
-    del(test_data['id'])
-    del(test_data['actors_names'])
-    del(test_data['writers_names'])
+    del (test_data['id'])
+    del (test_data['actors_names'])
+    del (test_data['writers_names'])
     return test_data
+
+
+def adopt_film_list_data(test_data):
+    out_test_data = [{'uuid':film['id'], 'title':film['title'], 'imdb_rating':film['imdb_rating']}
+                     for film in test_data]
+    return out_test_data
 
 
 @pytest.yield_fixture(scope="session")
