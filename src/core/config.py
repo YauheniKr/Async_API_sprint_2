@@ -11,14 +11,14 @@ logging_config.dictConfig(LOGGING)
 
 class Settings(BaseSettings):
     # Название проекта. Используется в Swagger-документации
-    PROJECT_NAME: str = 'movies'
+    PROJECT_NAME: str = "movies"
 
     # Настройки Redis
-    REDIS_HOST: str = '127.0.0.1'
+    REDIS_HOST: str = "127.0.0.1"
     REDIS_PORT: int = 6379
 
     # Настройки Elasticsearch
-    ELASTIC_HOST: str = '127.0.0.1'
+    ELASTIC_HOST: str = "127.0.0.1"
     ELASTIC_PORT: int = 9200
 
     # Корень проекта

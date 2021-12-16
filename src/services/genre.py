@@ -13,7 +13,7 @@ class GenreService(BaseService):
     def __init__(
         self,
         redis_service: BaseCacheService = Depends(RedisCacheService),
-        elastic_service: BaseGenreStorageService = Depends(ElasticGenreStorageService)
+        elastic_service: BaseGenreStorageService = Depends(ElasticGenreStorageService),
     ):
         self.cache_service = redis_service
         self.data_service = elastic_service
