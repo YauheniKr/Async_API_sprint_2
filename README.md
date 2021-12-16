@@ -13,3 +13,4 @@ docker-compose up test
 В данный репозиторий уже добавлена отрефакторенная по SOLID работа по 4му спринту в каталоге src
 
 Приглашение [BlueDeep](https://github.com/BigDeepBlue) отправлено
+ССылка на [репозиторий](https://github.com/YauheniKr/Async_API_sprint_2/) с работой
