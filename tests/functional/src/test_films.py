@@ -10,7 +10,8 @@ class TestsFilmsApi:
     @pytest.mark.asyncio
     async def test_film_detailed(self, load_movies_to_es, make_get_request, redis_client):
         test_data = load_movies_to_es._get_json_data(FILM_TEST_DATA['test_data'])[0]
-        response = await make_get_request(f'film/{test_data["id"]}')
+        test_data_id = test_data['id']
+        response = await make_get_request(f'film/{test_data_id}')
         test_data = adopt_test_data_movies(test_data)
         assert response.status == HTTPStatus.OK
         assert response.body == test_data
