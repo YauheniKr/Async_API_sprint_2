@@ -30,6 +30,26 @@ GENRE_TEST_DATA = {
 }
 
 
+def adopt_test_data_movies(test_data: dict) -> dict:
+    """
+    Адаптируем тестовые данные под формат бизнес логики
+    :param test_data: dict
+    :return: dict
+    """
+    test_data['directors'] = [{'uuid': director['id'], 'full_name': director['name']} for director
+                              in test_data['directors']]
+    test_data['actors'] = [{'uuid': actor['id'], 'full_name': actor['name']} for actor
+                           in test_data['actors']]
+    test_data['writers'] = [{'uuid': writer['id'], 'full_name': writer['name']} for writer
+                            in test_data['writers']]
+    test_data['genre'] = [{'uuid': genre['id'], 'name': genre['name']} for genre in test_data['genre']]
+    test_data['uuid'] = test_data['id']
+    del(test_data['id'])
+    del(test_data['actors_names'])
+    del(test_data['writers_names'])
+    return test_data
+
+
 @pytest.yield_fixture(scope="session")
 def event_loop(request):
     """Create an instance of the default event loop for each test case."""
