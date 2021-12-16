@@ -30,6 +30,20 @@ GENRE_TEST_DATA = {
 }
 
 
+def prepare_person_film_data(person_data: dict, test_movies: list[dict]) -> list[dict]:
+    """
+
+    :param person_data: словарь с id персоны и его именем
+    :param test_movies: список фильмов
+    :return: список фильмов в которых участвовал person
+    """
+    out = []
+    for movie in test_movies:
+        if person_data in movie['actors'] or person_data in movie['writers'] or person_data in movie['directors']:
+            out.append({'id': movie['id'], 'imdb_rating': movie['imdb_rating'], 'title': movie['title']})
+    return out
+
+
 def adopt_test_data_movies(test_data: dict) -> dict:
     """
     Адаптируем тестовые данные под формат бизнес логики
@@ -51,7 +65,7 @@ def adopt_test_data_movies(test_data: dict) -> dict:
 
 
 def adopt_film_list_data(test_data):
-    out_test_data = [{'uuid':film['id'], 'title':film['title'], 'imdb_rating':film['imdb_rating']}
+    out_test_data = [{'uuid': film['id'], 'title': film['title'], 'imdb_rating': film['imdb_rating']}
                      for film in test_data]
     return out_test_data
 
