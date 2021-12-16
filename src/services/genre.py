@@ -1,3 +1,4 @@
+import elasticsearch
 from elasticsearch_dsl import Search
 from fastapi import Depends
 
@@ -13,7 +14,7 @@ class GenreService(BaseService):
     def __init__(
         self,
         redis_service: BaseCacheService = Depends(RedisCacheService),
-        elastic_service: BaseGenreStorageService = Depends(ElasticGenreStorageService)
+        elastic_service: BaseGenreStorageService = Depends(ElasticGenreStorageService),
     ):
         self.cache_service = redis_service
         self.data_service = elastic_service
@@ -31,5 +32,8 @@ class GenreService(BaseService):
         model=Genre,
     )
     async def get_genre_list(self):
-        genres = await self.data_service.get_list()
+        try:
+            genres = await self.data_service.get_list()
+        except elasticsearch.exceptions.NotFoundError:
+            return None
         return [Genre(**g) for g in genres]

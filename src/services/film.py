@@ -28,12 +28,12 @@ class FilmService(BaseService):
         self,
         sort: str,
         page_number: str,
-        size: str,
+        page_size: str,
         filter_genre: UUID
     ) -> Union[list[BaseFilm], None]:
 
         filter_genre = str(filter_genre) if filter_genre else None
-        films = await self.data_service.get_film_list(sort, int(page_number), int(size), filter_genre)
+        films = await self.data_service.get_film_list(sort, int(page_number), int(page_size), filter_genre)
 
         if films:
             films = [BaseFilm(**film) for film in films]
@@ -44,8 +44,8 @@ class FilmService(BaseService):
         settings.FILM_CACHE_EXPIRE_IN_SECONDS,
         model=BaseFilm,
     )
-    async def search_film(self, query: str, page_number: str, size: str) -> Union[list[BaseFilm], None]:
-        films = await self.data_service.search_film(query, int(page_number), int(size))
+    async def search_film(self, query: str, page_number: str, page_size: str) -> Union[list[BaseFilm], None]:
+        films = await self.data_service.search_film(query, int(page_number), int(page_size))
 
         if films:
             films = [BaseFilm(**film) for film in films]
