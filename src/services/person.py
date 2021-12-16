@@ -14,7 +14,7 @@ class PersonService(BaseService):
     def __init__(
         self,
         redis_service: BaseCacheService = Depends(RedisCacheService),
-        elastic_service: BasePersonStorageService = Depends(ElasticPersonStorageService)
+        elastic_service: BasePersonStorageService = Depends(ElasticPersonStorageService),
     ):
         self.cache_service = redis_service
         self.data_service = elastic_service
@@ -34,7 +34,9 @@ class PersonService(BaseService):
         settings.PERSON_CACHE_EXPIRE_IN_SECONDS,
         model=Person,
     )
-    async def search_person(self, query: str, page_number: int, page_size: int, movies_service) -> list[Person]:
+    async def search_person(
+        self, query: str, page_number: int, page_size: int, movies_service
+    ) -> list[Person]:
         persons = await self.data_service.search_person(
             query=query,
             page_number=page_number,
