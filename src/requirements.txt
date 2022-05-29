@@ -8,7 +8,7 @@ charset-normalizer==2.0.7
 click==7.1.2
 elasticsearch==7.9.1
 elasticsearch-dsl==7.4.0
-fastapi==0.61.1
+fastapi>=0.65.2
 frozenlist==1.2.0
 h11==0.12.0
 hiredis==2.0.0
